@@ -8,7 +8,8 @@ kind-create-cluster:
 	kind create cluster --config kind-config.yaml --name $(NAMESPACE)
 	kind export kubeconfig --name $(NAMESPACE)
 	NEWURL=$$(kubectl config view | grep -B1 'name: $(CONTEXT)' | grep server: | awk '{print $$2}' | sed -e 's/0.0.0.0/$(HOST)/') ; \
-		kubectl config set-cluster $(CONTEXT) --server=$${NEWURL} --insecure-skip-tls-verify=true 
+		kubectl config set-cluster $(CONTEXT) --server=$${NEWURL} --insecure-skip-tls-verify=true
+	$(MAKE) deploy-epinio
 
 # src: https://kind.sigs.k8s.io/docs/user/ingress/
 kind-setup-ingress:
@@ -75,14 +76,28 @@ list-charts:
 	helm --kube-context=$(CONTEXT) list --namespace=$(NAMESPACE)
 
 deploy-dependencies:
-	helm upgrade broker stable/rabbitmq --install \
-		--namespace $(NAMESPACE) --kube-context=$(CONTEXT)
-	helm upgrade db stable/postgresql --install \
-		--set postgresqlDatabase=orders \
-		--namespace $(NAMESPACE) --kube-context=$(CONTEXT)
-	helm upgrade cache stable/redis --install \
-		--namespace $(NAMESPACE) --kube-context=$(CONTEXT)
+	helm upgrade broker stable/rabbitmq --install --namespace $(NAMESPACE) --kube-context=$(CONTEXT)
+	helm upgrade db stable/postgresql --install --set postgresqlDatabase=orders --namespace $(NAMESPACE) --kube-context=$(CONTEXT)
+	helm upgrade cache stable/redis --install --namespace $(NAMESPACE) --kube-context=$(CONTEXT)
 	kubectl --context=$(CONTEXT) --namespace=$(NAMESPACE) get pods
+
+deploy-epinio:
+	helm repo add jetstack https://charts.jetstack.io
+	helm repo add epinio https://epinio.github.io/helm-charts
+
+	$(MAKE) init-helm
+
+	helm upgrade --install cert-manager jetstack/cert-manager \
+		--namespace cert-manager \
+		--set installCRDs=true \
+		--set extraArgs={--enable-certificate-owner-ref=true} \
+		--create-namespace \
+		--kube-context=$(CONTEXT)
+
+	helm upgrade --install epinio epinio/epinio \
+		--namespace epinio \
+		--create-namespace \
+		--set global.domain=127.0.0.1.sslip.io
 
 install-charts:
 	cd ..; $(MAKE) build

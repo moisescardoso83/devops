@@ -1,7 +1,7 @@
-FROM python:3.7-slim-stretch as base
+FROM python:3.10-slim-buster as base
 
-RUN apt-get update && \
-    apt-get install --yes curl netcat
+RUN apt update && \
+    apt install --yes curl netcat-openbsd
 
 RUN pip3 install --upgrade pip
 RUN pip3 install virtualenv
@@ -18,8 +18,8 @@ RUN mkdir /var/nameko/ && chown -R nameko:nameko /var/nameko/
 
 FROM nameko-example-base as builder
 
-RUN apt-get update && \
-    apt-get install --yes build-essential autoconf libtool pkg-config \
+RUN apt update && \
+    apt install --yes build-essential autoconf libtool pkg-config \
     libgflags-dev libgtest-dev clang libc++-dev automake git libpq-dev
 
 RUN pip install auditwheel
