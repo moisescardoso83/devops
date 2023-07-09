@@ -1,0 +1,3 @@
+ - Verificar se a versão do manifesto suporta a versão do cluster sendo usada.
+ - Aplicar o manifesto nginx-ingress-controller.yaml
+ - - kubectl apply -f nginx-ingress-controller.yaml

@@ -1,0 +1,5 @@
+ - Aplicar os manifestos no diretório.
+ -- kubectl apply -f ./
+ -- Verificar ultima versão do container em https://github.com/kubernetes-sigs/external-dns/tree/master
+ -- Editar/Atualizar dominio e ids de acordo com a AWS
+ - Verificar se a Policy AmazonRoute53FullExternalDnsLimited tem a role correta adicionada eks-homol-worker-nodes-role,eks-prod-worker-nodes-role)

@@ -1,0 +1,56 @@
+pipeline {
+    agent any
+
+    environment {
+        AWS_DEFAULT_REGION = "us-east-1"
+        ECR_REPOSITORY = "AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com"
+        DOCKER_IMAGE_NAME = "<app name>"
+        DOCKERFILE_PATH = "<file path>"
+    }
+
+    stages {
+        stage('Commit Check') {
+            steps {
+                script {
+                    def commitMessage = sh(returnStdout: true, script: 'git log --format=%B -n 1').trim()
+                    echo "Commit Message: $commitMessage"
+
+                    if (commitMessage.contains("build: automatic update")) {
+                    echo "Build: Automatic update detected. Exiting the pipeline."
+                    error("Build: Automatic update not detected. Skipping the pipeline.")
+                    } else {
+                    echo "Build: Automatic update not detected. Executing pipeline."
+                   }
+
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh "docker build -t $DOCKER_IMAGE_NAME -f $DOCKERFILE_PATH ."
+            }
+        }
+
+        stage('Login to AWS ECR') {
+            steps {
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws-credentials', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+                    sh "aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REPOSITORY"
+                }
+            }
+        }
+
+        stage('Tag and Push Docker Image to ECR') {
+            steps {
+                script {
+                    docker_tag = "$ECR_REPOSITORY/$DOCKER_IMAGE_NAME:v3${env.BUILD_NUMBER}"
+                    docker_push = "$ECR_REPOSITORY/$DOCKER_IMAGE_NAME:latest"
+                    sh "docker tag $DOCKER_IMAGE_NAME $docker_tag"
+                    sh "docker push $docker_tag"
+                    sh "docker tag $DOCKER_IMAGE_NAME $docker_push"
+                    sh "docker push $docker_push"
+                }
+            }
+       }
+  }
+}

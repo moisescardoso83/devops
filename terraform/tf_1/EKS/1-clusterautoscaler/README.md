@@ -1,0 +1,4 @@
+- Cluster-Autoscaler
+  - Verificar Role correta e alterar ServiceAccount
+  - Verificar nome do cluster a alterar parametro: "--node-group-auto-discovery", no deployment.
+  - Aplicar: kubectl apply -f prod

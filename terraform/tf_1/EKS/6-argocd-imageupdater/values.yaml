@@ -1,0 +1,48 @@
+# -- Replica count for the deployment. It is not advised to run more than one replica.
+replicaCount: 1
+image:
+  # -- Default image repository
+  repository: quay.io/argoprojlabs/argocd-image-updater
+  # -- Default image pull policy
+  pullPolicy: Always
+  # -- Overrides the image tag whose default is the chart appVersion
+  tag: ""
+
+# -- The deployment strategy to use to replace existing pods with new ones
+updateStrategy:
+  type: Recreate
+
+config:
+  # -- API kind that is used to manage Argo CD applications (`kubernetes` or `argocd`)
+  applicationsAPIKind: ""
+
+  # Described in detail here https://argocd-image-updater.readthedocs.io/en/stable/install/running/#flags
+  argocd:
+    # -- Use the gRPC-web protocol to connect to the Argo CD API
+    grpcWeb: true
+    # -- Connect to the Argo CD API server at server address
+    serverAddress: ""
+    # -- If specified, the certificate of the Argo CD API server is not verified.
+    insecure: false
+    # -- If specified, use an unencrypted HTTP connection to the ArgoCD API instead of TLS.
+    plaintext: false
+    # -- If specified, the secret with ArgoCD API key will be created.
+    token: ""
+
+  # -- Disable kubernetes events
+  disableKubeEvents: false
+  # -- ArgoCD Image Update log level
+  logLevel: "info"
+
+  # -- ArgoCD Image Updater registries list configuration. More information [here](https://argocd-image-updater.readthedocs.io/en/stable/configuration/registries/)
+  registries:
+    - name: ECR
+      api_url: https://AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com
+      prefix: AWS_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com
+      ping: yes
+      insecure: no
+      default: true
+      credentials: pullsecret:argocd/ecr-credentials
+      credsexpire: 10h
+
+

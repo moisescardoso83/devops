@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kubernetes-dashboard-ingress
+  namespace: kubernetes-dashboard
+  annotations:
+    externalDnsType: nginx-private
+    nginx.ingress.kubernetes.io/backend-protocol: HTTPS
+    nginx.org/ssl-backends: kubernetes-dashboard
+spec:
+  ingressClassName: nginx-private
+  rules:
+    - host: kubedash-prod.domain.com
+      http:
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: kubernetes-dashboard
+                port:
+                  number: 443

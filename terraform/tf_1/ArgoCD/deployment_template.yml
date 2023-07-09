@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: my_app_1
+  namespace: argocd
+  annotations:
+    argocd-image-updater.argoproj.io/git-branch: some-env-tag
+    argocd-image-updater.argoproj.io/image-list: AWS_ACCOUNT.dkr.ecr.us-east-1.amazonaws.com/image-name:~v*
+    argocd-image-updater.argoproj.io/write-back-method: git:secret:argocd/githubsecret
+spec:
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: api
+  source:
+    repoURL: 'https://github.com/some-repos.git'
+    targetRevision: homol
+    path: deploy/homol
+    kustomize:
+      namePrefix: some-prefix-for-your-apss_
+      commonLabels:
+        app: my_app_1
+  project: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true

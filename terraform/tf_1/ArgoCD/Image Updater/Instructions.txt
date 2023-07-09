@@ -1,0 +1,7 @@
+To add image updater:
+kubectl create namespace argocd-image-updater
+kubectl apply -n argocd-image-updater -f https://raw.githubusercontent.com/argoproj-labs/argocd-image-updater/stable/manifests/install.yaml
+
+
+DOCS:
+https://argocd-image-updater.readthedocs.io/en/stable/install/installation/

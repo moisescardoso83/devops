@@ -1,0 +1,239 @@
+# Default values for aws-load-balancer-controller.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: public.ecr.aws/eks/aws-load-balancer-controller
+  tag: v2.5.1
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: aws-load-balancer-controller
+  automountServiceAccountToken: true
+  imagePullSecrets:
+rbac:
+  create: true
+
+podSecurityContext:
+  fsGroup: 65534
+
+securityContext:
+  # capabilities:
+  #   drop:
+  #   - ALL
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  allowPrivilegeEscalation: false
+
+terminationGracePeriodSeconds: 10
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+# priorityClassName specifies the PriorityClass to indicate the importance of controller pods
+# ref: https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/#priorityclass
+priorityClassName: system-cluster-critical
+nodeSelector: {}
+tolerations: []
+affinity: {}
+configureDefaultAffinity: true
+topologySpreadConstraints: {}
+
+updateStrategy: {}
+  # type: RollingUpdate
+  # rollingUpdate:
+  #   maxSurge: 1
+  #   maxUnavailable: 1
+
+serviceAnnotations: {}
+deploymentAnnotations: {}
+podAnnotations: {}
+podLabels: {}
+additionalLabels: {}
+enableCertManager: false
+clusterName: eks-prod
+cluster:
+    # Cluster DNS domain (required for requesting TLS certificates)
+    dnsDomain: cluster.local
+ingressClass: alb
+
+ingressClassParams:
+  create: true
+  name:
+  spec: {}
+createIngressClassResource: true
+region: us-east-1
+vpcId: vpc-
+
+awsApiEndpoints:
+awsApiThrottle:
+awsMaxRetries:
+defaultTargetType: instance
+enablePodReadinessGateInject:
+enableShield:
+enableWaf:
+enableWafv2:
+ingressMaxConcurrentReconciles:
+logLevel:
+metricsBindAddr: ""
+webhookBindPort:
+webhookTLS:
+  caCert:
+  cert:
+  key:
+
+webhookNamespaceSelectors:
+# - key: elbv2.k8s.aws/pod-readiness-gate-inject
+#   operator: In
+#   values:
+#   - enabled
+
+# keepTLSSecret specifies whether to reuse existing TLS secret for chart upgrade
+keepTLSSecret: true
+
+# Maximum number of concurrently running reconcile loops for service (default 3)
+serviceMaxConcurrentReconciles:
+
+# Maximum number of concurrently running reconcile loops for targetGroupBinding
+targetgroupbindingMaxConcurrentReconciles:
+
+# Maximum duration of exponential backoff for targetGroupBinding reconcile failures
+targetgroupbindingMaxExponentialBackoffDelay:
+
+# Period at which the controller forces the repopulation of its local object stores. (default 1h0m0s)
+syncPeriod:
+
+# Namespace the controller watches for updates to Kubernetes objects, If empty, all namespaces are watched.
+watchNamespace:
+
+# disableIngressClassAnnotation disables the usage of kubernetes.io/ingress.class annotation, false by default
+disableIngressClassAnnotation:
+
+# disableIngressGroupNameAnnotation disables the usage of alb.ingress.kubernetes.io/group.name annotation, false by default
+disableIngressGroupNameAnnotation:
+
+# defaultSSLPolicy specifies the default SSL policy to use for TLS/HTTPS listeners
+defaultSSLPolicy:
+
+# Liveness probe configuration for the controller
+livenessProbe:
+  failureThreshold: 2
+  httpGet:
+    path: /healthz
+    port: 61779
+    scheme: HTTP
+  initialDelaySeconds: 30
+  timeoutSeconds: 10
+
+# Environment variables to set for aws-load-balancer-controller pod.
+# We strongly discourage programming access credentials in the controller environment. You should setup IRSA or
+# comparable solutions like kube2iam, kiam etc instead.
+env:
+  # ENV_1: ""
+  # ENV_2: ""
+
+hostNetwork: false
+dnsPolicy:
+
+# extraVolumeMounts are the additional volume mounts. This enables setting up IRSA on non-EKS Kubernetes cluster
+extraVolumeMounts:
+  # - name: aws-iam-token
+  #   mountPath: /var/run/secrets/eks.amazonaws.com/serviceaccount
+  #   readOnly: true
+
+extraVolumes:
+  # - name: aws-iam-token
+  #   projected:
+  #     defaultMode: 420
+  #     sources:
+  #     - serviceAccountToken:
+  #         audience: sts.amazonaws.com
+  #         expirationSeconds: 86400
+  #         path: token
+
+# defaultTags are the tags to apply to all AWS resources managed by this controller
+defaultTags: {}
+
+podDisruptionBudget: {}
+#  maxUnavailable: 1
+
+# externalManagedTags is the list of tag keys on AWS resources that will be managed externally
+externalManagedTags: []
+
+# enableEndpointSlices enables k8s EndpointSlices for IP targets instead of Endpoints (default false)
+enableEndpointSlices:
+
+# enableBackendSecurityGroup enables shared security group for backend traffic (default true)
+enableBackendSecurityGroup:
+
+# backendSecurityGroup specifies backend security group id (default controller auto create backend security group)
+backendSecurityGroup:
+
+# disableRestrictedSecurityGroupRules specifies whether to disable creating port-range restricted security group rules for traffic
+disableRestrictedSecurityGroupRules:
+
+# controllerConfig specifies controller configuration
+controllerConfig:
+  # featureGates set of key: value pairs that describe AWS load balance controller features
+  featureGates: {}
+  # ListenerRulesTagging: true
+  # WeightedTargetGroups: true
+  # ServiceTypeLoadBalancerOnly: false
+  # EndpointsFailOpen: true
+  # EnableServiceController: true
+  # EnableIPTargetType: true
+  # SubnetsClusterTagCheck: true
+  # NLBHealthCheckAdvancedConfig: true
+
+# objectSelector for webhook
+objectSelector:
+  matchExpressions:
+  # - key: <key>
+  #   operator: <operator>
+  #   values:
+  #   - <value>
+  matchLabels:
+  #   key: value
+
+serviceMonitor:
+  # Specifies whether a service monitor should be created
+  enabled: false
+  # Labels to add to the service account
+  additionalLabels: {}
+  # Prometheus scrape interval
+  interval: 1m
+  # Namespace to create the service monitor in
+  namespace:
+
+# clusterSecretsPermissions lets you configure RBAC permissions for secret resources
+# Access to secrets resource is required only if you use the OIDC feature, and instead of
+# enabling access to all secrets, we recommend configuring namespaced role/rolebinding.
+# This option is for backwards compatibility only, and will potentially be deprecated in future.
+clusterSecretsPermissions:
+  # allowAllSecrets allows the controller to access all secrets in the cluster.
+  # This is to get backwards compatible behavior, but *NOT* recommended for security reasons
+  allowAllSecrets: false
+
+# ingressClassConfig contains configurations specific to the ingress class
+ingressClassConfig:
+  default: false
+
+# enableServiceMutatorWebhook allows you enable the webhook which makes this controller the default for all new services of type LoadBalancer
+enableServiceMutatorWebhook: true

@@ -1,0 +1,128 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: external-dns
+  namespace: devops
+secrets:
+  - name: external-dns-token
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: external-dns-token
+  namespace: kube-system
+  annotations:
+    kubernetes.io/service-account.name: cluster-autoscaler
+type: kubernetes.io/service-account-token
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: external-dns
+rules:
+  - verbs:
+      - get
+      - watch
+      - list
+    apiGroups:
+      - ''
+    resources:
+      - services
+  - verbs:
+      - get
+      - watch
+      - list
+    apiGroups:
+      - ''
+    resources:
+      - pods
+  - verbs:
+      - get
+      - watch
+      - list
+    apiGroups:
+      - networking
+      - networking.k8s.io
+    resources:
+      - ingresses
+  - verbs:
+      - get
+      - watch
+      - list
+    apiGroups:
+      - ''
+    resources:
+      - nodes
+  - verbs:
+      - get
+      - watch
+      - list
+    apiGroups:
+      - ''
+    resources:
+      - endpoints
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: external-dns-viewer
+subjects:
+  - kind: ServiceAccount
+    name: external-dns
+    namespace: devops
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: external-dns
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: external-dns-private
+  namespace: devops
+  labels:
+    app: external-dns-private
+spec:
+  strategy:
+    type: Recreate
+  replicas: 1
+  selector:
+    matchLabels:
+      app: external-dns-private
+  template:
+    metadata:
+      labels:
+        app: external-dns-private
+    spec:
+      containers:
+        - name: external-dns
+          image: registry.k8s.io/external-dns/external-dns:v0.13.5
+          args:
+            - '--aws-zone-type=public'
+            - '--source=service'
+            - '--source=ingress'
+            - '--provider=aws'
+            - '--policy=upsert-only'
+            - '--registry=txt'
+            - '--txt-owner-id=external-dns'
+            - '--domain-filter=domain.com'
+            - '--annotation-filter=externalDnsType=nginx'
+            - '--zone-id-filter=ZONE_ID'
+          resources:
+            limits:
+              cpu: 60m
+              memory: 200Mi
+            requests:
+              cpu: 30m
+              memory: 100Mi
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      serviceAccountName: external-dns
+      serviceAccount: external-dns
+      securityContext:
+        fsGroup: 65534
+      schedulerName: default-scheduler
