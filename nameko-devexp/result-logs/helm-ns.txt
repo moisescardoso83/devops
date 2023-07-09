@@ -1,7 +1,0 @@
-NAME    	NAMESPACE	REVISION	UPDATED                                	STATUS  	CHART           	APP VERSION
-broker  	nameko   	1       	2023-07-09 17:16:26.175045026 -0300 -03	deployed	rabbitmq-6.18.2 	3.8.2      
-cache   	nameko   	1       	2023-07-09 17:17:08.403526891 -0300 -03	deployed	redis-10.5.7    	5.0.7      
-db      	nameko   	1       	2023-07-09 17:16:36.587124732 -0300 -03	deployed	postgresql-8.6.4	11.7.0     
-gateway 	nameko   	1       	2023-07-09 17:22:17.518200308 -0300 -03	deployed	gateway-0.1.0   	           
-orders  	nameko   	1       	2023-07-09 17:21:51.212140808 -0300 -03	deployed	orders-0.1.0    	           
-products	nameko   	1       	2023-07-09 17:21:12.895400554 -0300 -03	deployed	products-0.1.0  	           
