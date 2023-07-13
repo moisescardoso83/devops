@@ -1,0 +1,44 @@
+apiVersion: application.epinio.io/v1
+kind: App
+metadata:
+  name: nameko-example-gateway
+  namespace: workspace
+spec:
+  chartname: standard
+  imageurl: nameko/nameko-example-gateway:dev
+  origin:
+    container: nameko/nameko-example-gateway:dev
+  routes:
+    - nameko-example-gateway.198.201.0.21.sslip.io
+  settings:
+    appListeningPort: '8000'
+---
+apiVersion: application.epinio.io/v1
+kind: App
+metadata:
+  name: nameko-example-orders
+  namespace: workspace
+spec:
+  chartname: standard
+  imageurl: nameko/nameko-example-orders:dev
+  origin:
+    container: nameko/nameko-example-orders:dev
+  routes:
+    - nameko-example-orders.198.201.0.21.sslip.io
+  settings:
+    appListeningPort: '8000'
+---
+apiVersion: application.epinio.io/v1
+kind: App
+metadata:
+  name: nameko-example-products
+  namespace: workspace
+spec:
+  chartname: standard
+  imageurl: nameko/nameko-example-products:dev
+  origin:
+    container: nameko/nameko-example-products:dev
+  routes:
+    - nameko-example-products.198.201.0.21.sslip.io
+  settings:
+    appListeningPort: '8000'
