@@ -1,4 +1,0 @@
-apiVersion: v1
-description: Gateway Service Kubernetes Chart
-name: gateway
-version: 0.1.0

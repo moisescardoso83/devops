@@ -1,9 +1,0 @@
-NAME                        READY   STATUS    RESTARTS   AGE
-broker-rabbitmq-0           1/1     Running   0          8m31s
-cache-redis-master-0        1/1     Running   0          7m49s
-cache-redis-slave-0         1/1     Running   0          7m49s
-cache-redis-slave-1         1/1     Running   0          7m4s
-db-postgresql-0             1/1     Running   0          8m21s
-gateway-5747c554f-7jsbn     1/1     Running   0          2m40s
-orders-797f87594-fzv66      1/1     Running   0          3m6s
-products-85f4bc7dd7-qljt6   1/1     Running   0          3m44s
