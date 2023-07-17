@@ -28,7 +28,7 @@ ADD alembic /var/nameko/alembic
 
 RUN chmod +x /var/nameko/run.sh
 
-USER nameko
+#USER nameko
 
 WORKDIR /var/nameko/
 
