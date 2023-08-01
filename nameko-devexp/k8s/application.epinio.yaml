@@ -9,7 +9,7 @@ spec:
   origin:
     container: nameko/nameko-example-gateway:dev
   routes:
-    - nameko-example-gateway.198.201.0.21.sslip.io
+    - nameko-example-gateway.198.201.0.200.sslip.io
   settings:
     appListeningPort: '8000'
 ---
@@ -24,7 +24,7 @@ spec:
   origin:
     container: nameko/nameko-example-orders:dev
   routes:
-    - nameko-example-orders.198.201.0.21.sslip.io
+    - nameko-example-orders.198.201.0.200.sslip.io
   settings:
     appListeningPort: '8000'
 ---
@@ -39,6 +39,6 @@ spec:
   origin:
     container: nameko/nameko-example-products:dev
   routes:
-    - nameko-example-products.198.201.0.21.sslip.io
+    - nameko-example-products.198.201.0.200.sslip.io
   settings:
     appListeningPort: '8000'

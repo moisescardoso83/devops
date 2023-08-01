@@ -3,5 +3,7 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/epinio" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/k8s/epinio-samples/pure-nodejs-web-server" vcs="Git" />
   </component>
 </project>
