@@ -1,3 +1,0 @@
-rabbitmqctl add_user user password fze5HKtRi4
-rabbitmqctl set_user_tags user administrator
-rabbitmqctl set_permissions -p / user ".*" ".*" ".*"
